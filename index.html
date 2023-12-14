@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Гра "Однорукий бандит"</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-image: url('jpg/fon.jpg');
+      background-size: cover;
+      background-position: center;
+      margin: 0;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      color: white; 
+    }
+    #slot-machine {
+      display: flex;
+      flex-wrap: wrap;
+      width: 330px; 
+      gap: 10px;
+      align-content: flex-start; 
+    }
+    img {
+      width: 100px;
+      height: 100px;
+    }
+    button {
+      margin-top: 20px;
+      padding: 10px 20px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+    #attempts {
+      font-size: 18px;
+      margin-bottom: 10px;
+    }
+  </style>
+</head>
+<body>
+  <h2>Гра "Однорукий бандит"</h2>
+  <div id="attempts"></div>
+  <div id="slot-machine"></div>
+  <button id="play-btn">Грати</button>
+
+  <script>
+window.onload = function() {
+  let username = prompt("Введіть ім'я:");
+  if (!username) {
+    alert('Будь ласка, введіть ім\'я!');
+    window.location.reload(); 
+  }
+
+  const slotMachine = document.getElementById('slot-machine');
+  const playBtn = document.getElementById('play-btn');
+  const attemptsDisplay = document.getElementById('attempts');
+  const images = ['1.png', '2.png', '3.png', '4.png', '5.png'];
+  let attempts = 4; 
+  let won = false; 
+
+  function getRandomIndex() {
+    return Math.floor(Math.random() * images.length);
+  }
+
+  function generateSlot() {
+    slotMachine.innerHTML = '';
+    for (let i = 0; i < 9; i++) {
+      const image = document.createElement('img');
+      image.src = `jpg/${images[getRandomIndex()]}`;
+      slotMachine.appendChild(image);
+    }
+  }
+
+  function playSlotMachine() {
+    attempts--;
+    attemptsDisplay.textContent = `Спроби: ${attempts}`;
+    generateSlot();
+
+    setTimeout(() => {
+      const allImages = slotMachine.querySelectorAll('img');
+      const imagesArray = Array.from(allImages);
+
+      for (let i = 0; i < imagesArray.length; i += 3) {
+        if (
+          imagesArray[i].src === imagesArray[i + 1].src &&
+          imagesArray[i].src === imagesArray[i + 2].src
+        ) {
+          if (!won) {
+            alert(`Ви перемогли, ${username}!`);
+            attempts = 3;
+            attemptsDisplay.textContent = `Спроби: ${attempts}`;
+            won = true;
+          }
+          break;
+        }
+      }
+
+      if (attempts === 0) {
+        alert('Спроби закінчилися. Гра починається знову.');
+        attempts = 3;
+        attemptsDisplay.textContent = `Спроби: ${attempts}`;
+        won = false; 
+      }
+    }, 1000); 
+  }
+
+  playBtn.addEventListener('click', playSlotMachine);
+};
+  </script>
+</body>
+</html>
